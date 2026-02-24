@@ -21,11 +21,14 @@ db.serialize(() => {
     name TEXT NOT NULL,
     location TEXT NOT NULL,
     race_date DATE NOT NULL,
+    has_sprint INTEGER DEFAULT 0,
     is_completed INTEGER DEFAULT 0,
+    quali_completed INTEGER DEFAULT 0,
+    sprint_completed INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // Predictions table
+  // Predictions table - team selection (4 drivers, 1 per team)
   db.run(`CREATE TABLE IF NOT EXISTS predictions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -33,23 +36,63 @@ db.serialize(() => {
     driver1 TEXT NOT NULL,
     driver2 TEXT NOT NULL,
     driver3 TEXT NOT NULL,
-    position1 TEXT NOT NULL,
-    position2 TEXT NOT NULL,
-    position3 TEXT NOT NULL,
-    points INTEGER DEFAULT 0,
+    driver4 TEXT NOT NULL,
+    quali_pos1 TEXT,
+    quali_pos2 TEXT,
+    quali_pos3 TEXT,
+    race_points INTEGER DEFAULT 0,
+    quali_points INTEGER DEFAULT 0,
+    sprint_points INTEGER DEFAULT 0,
+    total_points INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (race_id) REFERENCES races(id),
     UNIQUE(user_id, race_id)
   )`);
 
-  // Results table
-  db.run(`CREATE TABLE IF NOT EXISTS results (
+  // Race results table - top 10 finishers
+  db.run(`CREATE TABLE IF NOT EXISTS race_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     race_id INTEGER NOT NULL,
     position1 TEXT NOT NULL,
     position2 TEXT NOT NULL,
     position3 TEXT NOT NULL,
+    position4 TEXT NOT NULL,
+    position5 TEXT NOT NULL,
+    position6 TEXT NOT NULL,
+    position7 TEXT NOT NULL,
+    position8 TEXT NOT NULL,
+    position9 TEXT NOT NULL,
+    position10 TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (race_id) REFERENCES races(id),
+    UNIQUE(race_id)
+  )`);
+
+  // Qualifying results table - top 3
+  db.run(`CREATE TABLE IF NOT EXISTS quali_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    race_id INTEGER NOT NULL,
+    position1 TEXT NOT NULL,
+    position2 TEXT NOT NULL,
+    position3 TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (race_id) REFERENCES races(id),
+    UNIQUE(race_id)
+  )`);
+
+  // Sprint results table - top 8 get points
+  db.run(`CREATE TABLE IF NOT EXISTS sprint_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    race_id INTEGER NOT NULL,
+    position1 TEXT NOT NULL,
+    position2 TEXT NOT NULL,
+    position3 TEXT NOT NULL,
+    position4 TEXT NOT NULL,
+    position5 TEXT NOT NULL,
+    position6 TEXT NOT NULL,
+    position7 TEXT NOT NULL,
+    position8 TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (race_id) REFERENCES races(id),
     UNIQUE(race_id)

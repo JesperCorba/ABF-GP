@@ -20,15 +20,15 @@ router.get('/', (req, res) => {
 
 // Create race (admin only)
 router.post('/', authenticateToken, isAdmin, (req, res) => {
-  const { name, location, race_date } = req.body;
+  const { name, location, race_date, has_sprint } = req.body;
 
   if (!name || !location || !race_date) {
     return res.status(400).json({ error: 'Name, location, and race_date are required' });
   }
 
   db.run(
-    'INSERT INTO races (name, location, race_date) VALUES (?, ?, ?)',
-    [name, location, race_date],
+    'INSERT INTO races (name, location, race_date, has_sprint) VALUES (?, ?, ?, ?)',
+    [name, location, race_date, has_sprint ? 1 : 0],
     function(err) {
       if (err) {
         return res.status(500).json({ error: 'Error creating race' });

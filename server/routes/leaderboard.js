@@ -8,7 +8,10 @@ router.get('/', (req, res) => {
   db.all(
     `SELECT 
        u.username,
-       SUM(p.points) as total_points,
+       SUM(p.total_points) as total_points,
+       SUM(p.race_points) as race_points,
+       SUM(p.quali_points) as quali_points,
+       SUM(p.sprint_points) as sprint_points,
        COUNT(DISTINCT p.race_id) as races_predicted
      FROM users u
      LEFT JOIN predictions p ON u.id = p.user_id

@@ -355,6 +355,16 @@ nav a:hover, nav button:hover {
   }
 }
 
+/* Info text */
+.info-text {
+  background-color: #e7f3ff;
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  border-left: 3px solid var(--secondary-color);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
 /* Loading */
 .loading {
   text-align: center;

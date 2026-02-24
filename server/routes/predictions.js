@@ -7,7 +7,7 @@ const router = express.Router();
 // Get user's predictions
 router.get('/user', authenticateToken, (req, res) => {
   db.all(
-    `SELECT p.*, r.name as race_name, r.location, r.race_date, r.is_completed
+    `SELECT p.*, r.name as race_name, r.location, r.race_date, r.is_completed, r.has_sprint, r.quali_completed
      FROM predictions p
      JOIN races r ON p.race_id = r.id
      WHERE p.user_id = ?
@@ -22,16 +22,16 @@ router.get('/user', authenticateToken, (req, res) => {
   );
 });
 
-// Submit prediction
+// Submit or update prediction
 router.post('/', authenticateToken, (req, res) => {
-  const { race_id, driver1, driver2, driver3, position1, position2, position3 } = req.body;
+  const { race_id, driver1, driver2, driver3, driver4, quali_pos1, quali_pos2, quali_pos3 } = req.body;
 
-  if (!race_id || !driver1 || !driver2 || !driver3 || !position1 || !position2 || !position3) {
-    return res.status(400).json({ error: 'All fields are required' });
+  if (!race_id || !driver1 || !driver2 || !driver3 || !driver4) {
+    return res.status(400).json({ error: 'Race ID and 4 drivers are required' });
   }
 
   // Check if race is already completed
-  db.get('SELECT is_completed FROM races WHERE id = ?', [race_id], (err, race) => {
+  db.get('SELECT is_completed, quali_completed FROM races WHERE id = ?', [race_id], (err, race) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -44,18 +44,20 @@ router.post('/', authenticateToken, (req, res) => {
 
     // Insert or update prediction
     db.run(
-      `INSERT INTO predictions (user_id, race_id, driver1, driver2, driver3, position1, position2, position3)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `INSERT INTO predictions (user_id, race_id, driver1, driver2, driver3, driver4, quali_pos1, quali_pos2, quali_pos3)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(user_id, race_id) DO UPDATE SET
          driver1 = excluded.driver1,
          driver2 = excluded.driver2,
          driver3 = excluded.driver3,
-         position1 = excluded.position1,
-         position2 = excluded.position2,
-         position3 = excluded.position3`,
-      [req.user.id, race_id, driver1, driver2, driver3, position1, position2, position3],
+         driver4 = excluded.driver4,
+         quali_pos1 = excluded.quali_pos1,
+         quali_pos2 = excluded.quali_pos2,
+         quali_pos3 = excluded.quali_pos3`,
+      [req.user.id, race_id, driver1, driver2, driver3, driver4, quali_pos1, quali_pos2, quali_pos3],
       function(err) {
         if (err) {
+          console.error('Error saving prediction:', err);
           return res.status(500).json({ error: 'Error saving prediction' });
         }
         res.json({ message: 'Prediction saved successfully' });
