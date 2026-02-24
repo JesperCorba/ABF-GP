@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
-if (!JWT_SECRET || JWT_SECRET === 'your-secret-key-change-in-production') {
+if (!process.env.JWT_SECRET) {
   console.warn('\n⚠️  WARNING: Using default JWT_SECRET is insecure!');
   console.warn('Please set JWT_SECRET environment variable for production use.\n');
 }
