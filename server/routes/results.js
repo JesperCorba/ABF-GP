@@ -67,6 +67,14 @@ function calculatePoints(race_id, actualPos1, actualPos2, actualPos3, callback) 
     [race_id],
     (err, predictions) => {
       if (err || !predictions) {
+        console.error('Error fetching predictions for points calculation:', err);
+        return callback();
+      }
+
+      let updateCount = 0;
+      const totalPredictions = predictions.length;
+
+      if (totalPredictions === 0) {
         return callback();
       }
 
@@ -112,11 +120,18 @@ function calculatePoints(race_id, actualPos1, actualPos2, actualPos3, callback) 
         // Update points
         db.run(
           'UPDATE predictions SET points = ? WHERE id = ?',
-          [points, pred.id]
+          [points, pred.id],
+          (err) => {
+            if (err) {
+              console.error(`Error updating points for prediction ${pred.id}:`, err);
+            }
+            updateCount++;
+            if (updateCount === totalPredictions) {
+              callback();
+            }
+          }
         );
       });
-
-      callback();
     }
   );
 }

@@ -57,10 +57,19 @@ db.serialize(() => {
 
   // Create default admin user (username: admin, password: admin123)
   const bcrypt = require('bcryptjs');
-  const defaultPassword = bcrypt.hashSync('admin123', 10);
+  const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  const defaultPassword = bcrypt.hashSync(adminPassword, 10);
   
   db.run(`INSERT OR IGNORE INTO users (username, password, is_admin) 
-          VALUES ('admin', ?, 1)`, [defaultPassword]);
+          VALUES (?, ?, 1)`, [adminUsername, defaultPassword], function(err) {
+    if (!err && this.changes > 0) {
+      console.log('\n✅ Default admin account created:');
+      console.log(`   Username: ${adminUsername}`);
+      console.log(`   Password: ${adminPassword}`);
+      console.log('⚠️  Please change the password after first login!\n');
+    }
+  });
   
   console.log('Database initialized');
 });

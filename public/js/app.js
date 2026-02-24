@@ -2,7 +2,7 @@
 let currentUser = null;
 let currentPage = 'home';
 
-// F1 Drivers for 2024 season
+// F1 Drivers for 2026 season
 const F1_DRIVERS = [
   'Max Verstappen',
   'Sergio Perez',

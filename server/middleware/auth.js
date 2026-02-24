@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET || JWT_SECRET === 'your-secret-key-change-in-production') {
+  console.warn('\n⚠️  WARNING: Using default JWT_SECRET is insecure!');
+  console.warn('Please set JWT_SECRET environment variable for production use.\n');
+}
 
 function authenticateToken(req, res, next) {
   const token = req.cookies.token;
