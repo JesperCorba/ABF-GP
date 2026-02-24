@@ -126,3 +126,15 @@ ABF-GP/
 ## License
 
 ISC
+
+## Security Notes
+
+This is a demonstration application. For production deployment, consider:
+
+1. **Rate Limiting**: Add rate limiting to prevent abuse (e.g., using `express-rate-limit`)
+2. **CSRF Protection**: Implement CSRF tokens for cookie-based authentication (e.g., using `csurf`)
+3. **HTTPS**: Always use HTTPS in production
+4. **Input Validation**: Add more comprehensive input validation
+5. **SQL Injection**: While using parameterized queries, consider an ORM for additional safety
+6. **Session Management**: Implement session timeouts and refresh tokens
+7. **Logging**: Add comprehensive security logging and monitoring
