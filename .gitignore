@@ -1,0 +1,11 @@
+bin/
+obj/
+TestResults/
+playwright.ps1
+.idea/
+.vs/
+*.user
+*.suo
+docs/reports/*.png
+docs/reports/*.html
+docs/reports/*.md
